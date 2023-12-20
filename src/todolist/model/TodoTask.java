@@ -1,4 +1,4 @@
-package com.jasmintkhan.todolist.model;
+package todolist.model;
 
 public class TodoTask {
     //Properties of a task
@@ -20,7 +20,7 @@ public class TodoTask {
         return name;
     }
 
-    public void String setName(){
+    public void setName(String name){
         this.name = name;
     }
 
@@ -28,7 +28,7 @@ public class TodoTask {
         return description;
     }
 
-    public void String setDescription() {
+    public void setDescription(String description) {
         this.description = description;
     }
 
@@ -38,5 +38,28 @@ public class TodoTask {
 
     public void setCompleted(boolean completed) {
         isCompleted = completed;
+    }
+
+    //Override toString to print details of a task
+    @Override
+    public String toString() {
+        return "TodoTask{" +
+           "name='" + name + '\'' +
+           ", description='" + description + '\'' +
+           ", isCompleted=" + isCompleted +
+           '}';
+    }
+
+    //TESTING
+    /* To Test in Terminal...
+     * 1. Compile: javac src/todolist/model/TodoTask.java
+     * 2. Run: java src/todolist/model/TodoTask
+     */
+    public static void main(String[] args){
+        TodoTask task1 = new TodoTask("Study", "Chemistry, Biology, Physics");
+        System.out.println(task1);
+        TodoTask task2 = new TodoTask("Send email", "Weekly Stand-Up");
+        task2.setCompleted(true);
+        System.out.println(task2);
     }
 }
