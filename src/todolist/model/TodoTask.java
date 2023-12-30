@@ -1,5 +1,6 @@
 package todolist.model;
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicInteger;
 
 enum Priority { //fixed constants for priority
     LOW, MEDIUM, HIGH
@@ -17,6 +18,8 @@ public class TodoTask {
     private LocalDate dueDate; //Due Date for task
     private Priority priority; //Priority of task
     private Category category; //Category of task
+    private static final AtomicInteger count = new AtomicInteger(0); //For unique ID generation
+    private int id;
 
     //Constructor: to set initial values for a task
     public TodoTask(String name, String description, LocalDate dueDate, Priority priority, Category category){
@@ -26,6 +29,7 @@ public class TodoTask {
         this.dueDate = dueDate; //sets the due date
         this.priority = priority; 
         this.category = category; 
+        this.id = count.incrementAndGet(); //Assign and increment the unique ID
     }
 
     //Getters and Setters (existing items)
@@ -77,6 +81,10 @@ public class TodoTask {
 
     public void setCategory(Category category){
         this.category = category;
+    }
+
+    public int getId() {
+        return id;
     }
 
     //Override toString to print details of a task
