@@ -196,13 +196,34 @@ public class TodoTaskController {
                     .collect(Collectors.toList());
     }
 
+    //Searches tasks by name
+    public List<TodoTask> searchTasksByName(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            throw new IllegalArgumentException("Search query cannot be null or empty.");
+        }
+    
+        String lowerCaseQuery = query.toLowerCase();
+        return tasks.stream()
+                    .filter(task -> task.getName().toLowerCase().contains(lowerCaseQuery))
+                    .collect(Collectors.toList());
+    }
+    
+    //Searches tasks by id
+    public TodoTask searchTaskById(int taskId) {
+        return tasks.stream()
+                    .filter(task -> task.getId() == taskId)
+                    .findFirst()
+                    .orElse(null); // checks if the task is null
+    }
+    
+
 
     /*public static void main(String[] args) {
         //Create the controller instance
         TodoTaskController controller = new TodoTaskController();
         
         //Create some tasks
-        TodoTask task1 = new TodoTask("Study", "Study for exams", LocalDate.now().plusDays(1), Priority.HIGH, Category.STUDY);
+        TodoTask task1 = new TodoTask("Study Java", "Study for exams", LocalDate.now().plusDays(1), Priority.HIGH, Category.STUDY);
         TodoTask task2 = new TodoTask("Groceries", "Buy milk and bread", LocalDate.now().plusDays(2), Priority.MEDIUM, Category.PERSONAL);
         TodoTask task3 = new TodoTask("Gym", "Leg day", LocalDate.now().plusDays(2), Priority.LOW, Category.HEALTH);
         TodoTask task4 = new TodoTask("Work", "Weekly Stand-Up", LocalDate.now().plusDays(3), Priority.HIGH, Category.WORK);
@@ -215,6 +236,54 @@ public class TodoTaskController {
         controller.addTask(task4);
         controller.addTask(task5);
         controller.addTask(task6);
+
+        // Test searching for an existing task by ID
+        int existingId = 1;  // Assuming a task with this ID exists
+        TodoTask task = controller.searchTaskById(existingId);
+        if (task != null) {
+            System.out.println("Found task with ID " + existingId + ": " + task.getName());
+        } else {
+            System.out.println("No task found with ID " + existingId);
+        }
+
+        // Test searching for a non-existing task by ID
+        int nonExistingId = 999;  // Assuming no task with this ID exists
+        task = controller.searchTaskById(nonExistingId);
+        if (task != null) {
+            System.out.println("Found task with ID " + nonExistingId + ": " + task.getName());
+        } else {
+            System.out.println("No task found with ID " + nonExistingId);
+        }
+
+        // Test searching for an existing task by name
+        String existingName = "Study Java";  // Assuming a task with this name exists
+        List<TodoTask> tasks = controller.searchTasksByName(existingName);
+        if (!tasks.isEmpty()) {
+            System.out.println("Found tasks with name '" + existingName + "':");
+            tasks.forEach(foundTask -> System.out.println(foundTask.getName() + " - " + foundTask.getDescription()));
+        } else {
+            System.out.println("No tasks found with name '" + existingName + "'");
+        }
+
+        // Test searching for a non-existing task by name
+        String nonExistingName = "Fly to the moon";  // Assuming no task with this name exists
+        tasks = controller.searchTasksByName(nonExistingName);
+        if (!tasks.isEmpty()) {
+            System.out.println("Found tasks with name '" + nonExistingName + "':");
+            tasks.forEach(foundTask -> System.out.println(foundTask.getName() + " - " + foundTask.getDescription()));
+        } else {
+            System.out.println("No tasks found with name '" + nonExistingName + "'");
+        }
+
+        // Test searching with a partial name match
+        String partialName = "Study";  // Assuming some tasks partially match this name
+        tasks = controller.searchTasksByName(partialName);
+        if (!tasks.isEmpty()) {
+            System.out.println("Found tasks with partial name '" + partialName + "':");
+            tasks.forEach(foundTask -> System.out.println(foundTask.getName() + " - " + foundTask.getDescription()));
+        } else {
+            System.out.println("No tasks found with partial name '" + partialName + "'");
+        }
 
 
         //Testing filtering and sorting
