@@ -2,22 +2,23 @@ package todolist.model;
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicInteger;
 
-enum Priority { //fixed constants for priority
-    LOW, MEDIUM, HIGH
-}
-
-enum Category { //fixed constants for category
-    WORK, STUDY, PERSONAL, HEALTH
-}
-
 public class TodoTask {
     //Properties of a task
     private String name; //Tasks's name
     private String description; //About the task
     private boolean isCompleted; //Is it completed?
     private LocalDate dueDate; //Due Date for task
+
+    public enum Priority { //fixed constants for priority
+        LOW, MEDIUM, HIGH
+    }
     private Priority priority; //Priority of task
+
+    public enum Category { //fixed constants for category
+        WORK, STUDY, PERSONAL, HEALTH
+    }
     private Category category; //Category of task
+    
     private static final AtomicInteger count = new AtomicInteger(0); //For unique ID generation
     private int id;
 
