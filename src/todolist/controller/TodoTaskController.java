@@ -1,6 +1,10 @@
 package todolist.controller;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import todolist.model.TodoTask;
 import todolist.model.TodoTask.Priority; // Importing Priority
 import todolist.model.TodoTask.Category; // Importing Category
@@ -127,17 +131,117 @@ public class TodoTaskController {
         }
     }
 
+    //Filters tasks by priority
+    public List<TodoTask> filterTasksByPriority(Priority priority) {
+        if (priority == null) {
+            throw new IllegalArgumentException("Priority cannot be null.");
+        }
+        return tasks.stream()
+                    .filter(task -> task.getPriority() == priority)
+                    .collect(Collectors.toList());
+    }
+
+    //Filters tasks by category
+    public List<TodoTask> filterTasksByCategory(Category category) {
+        if (category == null) {
+            throw new IllegalArgumentException("Category cannot be null.");
+        }
+        return tasks.stream()
+                    .filter(task -> task.getCategory() == category)
+                    .collect(Collectors.toList());
+    }
+
+    //Filters tasks by due date
+    public List<TodoTask> filterTasksByDueDate(LocalDate dueDate) {
+        if (dueDate == null) {
+            throw new IllegalArgumentException("Due date cannot be null.");
+        }
+        return tasks.stream()
+                    .filter(task -> task.getDueDate().equals(dueDate))
+                    .collect(Collectors.toList());
+    }
+
+    //Filters tasks by completion status
+    public List<TodoTask> filterTasksByCompletionStatus(boolean isCompleted) {
+        return tasks.stream()
+                    .filter(task -> task.isCompleted() == isCompleted)
+                    .collect(Collectors.toList());
+    }
+
+    //Sorts tasks by priority
+    public List<TodoTask> sortTasksByPriority() {
+        return tasks.stream()
+                    .sorted(Comparator.comparing(TodoTask::getPriority, Comparator.nullsLast(Enum::compareTo)))
+                    .collect(Collectors.toList());
+    }
+    
+    //Sorts tasks by category
+    public List<TodoTask> sortTasksByCategory() {
+        return tasks.stream()
+                    .sorted(Comparator.comparing(TodoTask::getCategory, Comparator.nullsLast(Enum::compareTo)))
+                    .collect(Collectors.toList());
+    }
+
+    //Sorts tasks by due date
+    public List<TodoTask> sortTasksByDueDate() {
+        return tasks.stream()
+                    .sorted(Comparator.comparing(TodoTask::getDueDate, Comparator.nullsLast(LocalDate::compareTo)))
+                    .collect(Collectors.toList());
+    }
+
+    //Sorts tasks by name
+    public List<TodoTask> sortTasksByName() {
+        return tasks.stream()
+                    .sorted(Comparator.comparing(TodoTask::getName, Comparator.nullsLast(String::compareTo)))
+                    .collect(Collectors.toList());
+    }
+
+
     /*public static void main(String[] args) {
-        // Create the controller instance
+        //Create the controller instance
         TodoTaskController controller = new TodoTaskController();
         
-        // Create some tasks
+        //Create some tasks
         TodoTask task1 = new TodoTask("Study", "Study for exams", LocalDate.now().plusDays(1), Priority.HIGH, Category.STUDY);
         TodoTask task2 = new TodoTask("Groceries", "Buy milk and bread", LocalDate.now().plusDays(2), Priority.MEDIUM, Category.PERSONAL);
-    
-        // Add tasks to the controller
+        TodoTask task3 = new TodoTask("Gym", "Leg day", LocalDate.now().plusDays(2), Priority.LOW, Category.HEALTH);
+        TodoTask task4 = new TodoTask("Work", "Weekly Stand-Up", LocalDate.now().plusDays(3), Priority.HIGH, Category.WORK);
+        TodoTask task5 = new TodoTask("Clean", "Clean Kitchen", LocalDate.now().plusDays(3), Priority.MEDIUM, Category.PERSONAL);
+        TodoTask task6 = new TodoTask("Laundry", "Wash clothes", LocalDate.now().plusDays(4), Priority.LOW, Category.PERSONAL);
+        //Add tasks to the controller
         controller.addTask(task1);
         controller.addTask(task2);
+        controller.addTask(task3);
+        controller.addTask(task4);
+        controller.addTask(task5);
+        controller.addTask(task6);
+
+
+        //Testing filtering and sorting
+        List<TodoTask> highPriorityTasks = controller.filterTasksByPriority(Priority.HIGH);
+        System.out.println("High Priority Tasks: " + highPriorityTasks);
+
+        List<TodoTask> personalTasks = controller.filterTasksByCategory(Category.PERSONAL);
+        System.out.println("Personal Tasks: " + personalTasks);
+
+        List<TodoTask> tasksDueToday = controller.filterTasksByDueDate(LocalDate.now());
+        System.out.println("Tasks due today: " + tasksDueToday);
+
+        List<TodoTask> tasksDueTomorrow = controller.filterTasksByDueDate(LocalDate.now().plusDays(1));
+        System.out.println("Tasks due tomorrow: " + tasksDueTomorrow);
+
+        List<TodoTask> tasksSortedByPriority = controller.sortTasksByPriority();
+        System.out.println("\nTasks sorted by priority: " + tasksSortedByPriority);
+
+        List<TodoTask> tasksSortedByCategory = controller.sortTasksByCategory();
+        System.out.println("\nTasks sorted by category: " + tasksSortedByCategory);
+
+        List<TodoTask> tasksSortedByDueDate = controller.sortTasksByDueDate();
+        System.out.println("\nTasks sorted by due date: " + tasksSortedByDueDate);
+
+        //List<TodoTask> noPriorityTasks = controller.filterTasksByPriority(null);  // This should throw an exception
+
+        /////////////////////////////
 
         // Print all tasks to verify they were added
         System.out.println("Tasks after addition:");
