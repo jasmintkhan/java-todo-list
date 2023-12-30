@@ -1,16 +1,31 @@
 package todolist.model;
+import java.time.LocalDate;
+
+enum Priority { //fixed constants for priority
+    LOW, MEDIUM, HIGH
+}
+
+enum Category { //fixed constants for category
+    WORK, STUDY, PERSONAL, HEALTH
+}
 
 public class TodoTask {
     //Properties of a task
     private String name; //Tasks's name
     private String description; //About the task
     private boolean isCompleted; //Is it completed?
+    private LocalDate dueDate; //Due Date for task
+    private Priority priority; //Priority of task
+    private Category category; //Category of task
 
     //Constructor: to set initial values for a task
-    public TodoTask(String name, String description){
+    public TodoTask(String name, String description, LocalDate dueDate, Priority priority, Category category){
         this.name = name;
         this.description = description;
         this.isCompleted = false; //Tasks always start off not completed!
+        this.dueDate = dueDate; //sets the due date
+        this.priority = priority; 
+        this.category = category; 
     }
 
     //Getters and Setters (existing items)
@@ -40,14 +55,41 @@ public class TodoTask {
         isCompleted = completed;
     }
 
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+    
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority){
+        this.priority = priority;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category){
+        this.category = category;
+    }
+
     //Override toString to print details of a task
     @Override
     public String toString() {
         return "TodoTask{" +
-           "name='" + name + '\'' +
-           ", description='" + description + '\'' +
-           ", isCompleted=" + isCompleted +
-           '}';
+            "name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", isCompleted=" + isCompleted +
+            ", dueDate=" + dueDate +
+            ", priority=" + priority +
+            ", category=" + category +
+            '}';
     }
 
     //TESTING
@@ -56,9 +98,9 @@ public class TodoTask {
      * 2. Run: java src/todolist/model/TodoTask
      */
     public static void main(String[] args){
-        TodoTask task1 = new TodoTask("Study", "Chemistry, Biology, Physics");
+        TodoTask task1 = new TodoTask("Study", "Chemistry, Biology, Physics", LocalDate.of(2023, 12, 31), Priority.HIGH, Category.STUDY);
         System.out.println(task1);
-        TodoTask task2 = new TodoTask("Send email", "Weekly Stand-Up");
+        TodoTask task2 = new TodoTask("Send email", "Weekly Stand-Up", LocalDate.of(2023, 12, 31), Priority.LOW, Category.WORK);
         task2.setCompleted(true);
         System.out.println(task2);
     }
