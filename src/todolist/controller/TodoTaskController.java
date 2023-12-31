@@ -1,9 +1,7 @@
 package todolist.controller;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.*;
 
 import todolist.model.TodoTask;
 import todolist.model.TodoTask.Priority; // Importing Priority
@@ -216,6 +214,53 @@ public class TodoTaskController {
                     .orElse(null); // checks if the task is null
     }
     
+    
+    //Periodically checks for upcoming tasks and sends notifications
+    public static class NotificationService {
+        private TodoTaskController controller;
+        private Timer timer;
+
+        public NotificationService(TodoTaskController controller) {
+            this.controller = controller;
+            this.timer = new Timer();
+        }
+
+        public void startChecking() {
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    checkForUpcomingTasks();
+                    checkForOverdueTasks();
+                }
+            };
+
+            // Schedule the task to run every hour
+            timer.schedule(task, 0, 3600000);
+        }
+
+        private void checkForUpcomingTasks() {
+            LocalDate tomorrow = LocalDate.now().plusDays(1);
+            List<TodoTask> upcomingTasks = controller.filterTasksByDueDate(tomorrow);
+
+            for (TodoTask task : upcomingTasks) {
+                //notification logic 
+                System.out.println("UPCOMING: The task '" + task.getName() + "' is due soon!");
+            }
+        }
+
+        private void checkForOverdueTasks() {
+            LocalDate today = LocalDate.now();
+            List<TodoTask> overdueTasks = controller.tasks.stream()
+                .filter(task -> (task.getDueDate() != null && task.getDueDate().isBefore(today)) && !task.isCompleted())
+                .collect(Collectors.toList());
+        
+            for (TodoTask task : overdueTasks) {
+                // Implement your notification logic here
+                System.out.println("OVERDUE: The task '" + task.getName() + "' was due on " + task.getDueDate() + " and is not completed!");
+            }
+        }
+        
+    }
 
 
     /*public static void main(String[] args) {
@@ -227,8 +272,9 @@ public class TodoTaskController {
         TodoTask task2 = new TodoTask("Groceries", "Buy milk and bread", LocalDate.now().plusDays(2), Priority.MEDIUM, Category.PERSONAL);
         TodoTask task3 = new TodoTask("Gym", "Leg day", LocalDate.now().plusDays(2), Priority.LOW, Category.HEALTH);
         TodoTask task4 = new TodoTask("Work", "Weekly Stand-Up", LocalDate.now().plusDays(3), Priority.HIGH, Category.WORK);
-        TodoTask task5 = new TodoTask("Clean", "Clean Kitchen", LocalDate.now().plusDays(3), Priority.MEDIUM, Category.PERSONAL);
-        TodoTask task6 = new TodoTask("Laundry", "Wash clothes", LocalDate.now().plusDays(4), Priority.LOW, Category.PERSONAL);
+        TodoTask task5 = new TodoTask("Laundry", "Wash clothes", LocalDate.now().plusDays(4), Priority.LOW, Category.PERSONAL);
+        TodoTask task6 = new TodoTask("Overdue Task", "This task is overdue", LocalDate.now().minusDays(1), Priority.HIGH, Category.WORK);
+        
         //Add tasks to the controller
         controller.addTask(task1);
         controller.addTask(task2);
@@ -236,6 +282,10 @@ public class TodoTaskController {
         controller.addTask(task4);
         controller.addTask(task5);
         controller.addTask(task6);
+
+        // Test the notification service
+        NotificationService notificationService = new NotificationService(controller);
+        notificationService.startChecking();  // This should trigger your reminders
 
         // Test searching for an existing task by ID
         int existingId = 1;  // Assuming a task with this ID exists
