@@ -18,7 +18,7 @@ public class TodoTask {
         WORK, STUDY, PERSONAL, HEALTH
     }
     private Category category; //Category of task
-    
+
     private static final AtomicInteger count = new AtomicInteger(0); //For unique ID generation
     private int id;
 
@@ -106,11 +106,11 @@ public class TodoTask {
      * 1. Compile: javac src/todolist/model/TodoTask.java
      * 2. Run: java src/todolist/model/TodoTask
      */
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         TodoTask task1 = new TodoTask("Study", "Chemistry, Biology, Physics", LocalDate.of(2023, 12, 31), Priority.HIGH, Category.STUDY);
         System.out.println(task1);
         TodoTask task2 = new TodoTask("Send email", "Weekly Stand-Up", LocalDate.of(2023, 12, 31), Priority.LOW, Category.WORK);
         task2.setCompleted(true);
         System.out.println(task2);
-    }
+    }*/
 }
