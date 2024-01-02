@@ -1,6 +1,6 @@
 package com.jasmintkhan.todolist.model;
 import java.time.LocalDate;
-import java.util.concurrent.atomic.AtomicInteger;
+//import java.util.concurrent.atomic.AtomicInteger;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,8 +32,8 @@ public class TodoTask {
     }
     private Category category; //Category of task
 
-    private static final AtomicInteger count = new AtomicInteger(0); //For unique ID generation
-    private int id;
+    //private static final AtomicInteger count = new AtomicInteger(0); //For unique ID generation
+    //private int id;
 
     //Constructor: to set initial values for a task
     public TodoTask(String name, String description, LocalDate dueDate, Priority priority, Category category){
@@ -43,7 +43,8 @@ public class TodoTask {
         this.dueDate = dueDate; //sets the due date
         this.priority = priority; 
         this.category = category; 
-        this.id = count.incrementAndGet(); //Assign and increment the unique ID
+        //this.id = count.incrementAndGet(); //Assign and increment the unique ID
+        // ^ JPA HANDLES ID
     }
 
     //Getters and Setters (existing items)
@@ -106,9 +107,9 @@ public class TodoTask {
         this.category = category;
     }
 
-    public int getId() {
-        return id;
-    }
+    //public int getId() {
+    //    return id;
+    //}
 
 
     //Override toString to print details of a task
