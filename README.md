@@ -13,15 +13,15 @@ Prerequisites include Java, Maven, and Git. To set up and run the application:
 
 ### Java Version
 - **Prerequisites:** Ensure Java is installed on your system.
-- **Running the Application:** Instructions on how to compile and run the Java version.
+- **Running the Application:** Navigate to the `src` directory of the Java version and compile the code using `javac FileName.java`, then run it using `java FileName`.
 
 ### Spring Boot Version
 - **Prerequisites:** Ensure Java and Maven are installed on your system.
-- **Running the Application:** Instructions on how to run the Spring Boot application.
+- **Running the Application:** Navigate to the root of the Spring Boot version and run `mvn spring-boot:run`. The application will start, and you can access it via `http://localhost:8080` in your web browser.
 
 ## Usage
-- **Java Version:** Details on how to use the console-based application.
-- **Spring Boot Version:** Guide to accessing and navigating the web-based UI.
+- **Java Version:** The console-based application will guide you through the available commands once started.
+- **Spring Boot Version:** Access the application through your web browser. You'll be greeted with a simple UI where you can view, add, delete, and update tasks.
 
 ## Contributing
 While the project is primarily for personal learning and development, suggestions and advice are welcome. Please feel free to reach out or open an issue to discuss potential improvements or learning resources.
@@ -39,6 +39,9 @@ Future updates may include:
 
 - User authentication and personal task lists.
 - Deploying the application for public use.
+
+## Troubleshooting
+- TBD
 
 ## Contact
 For any queries, feel free to contact me at jasmintkhan@gmail.com.
