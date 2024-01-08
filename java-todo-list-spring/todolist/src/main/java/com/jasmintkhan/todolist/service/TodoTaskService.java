@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @Service
 public class TodoTaskService {
@@ -151,7 +153,7 @@ public class TodoTaskService {
     }
     
     // Update a task by ID
-    public TodoTask updateTaskById(Long id, TodoTask updatedTask) {
+    public Optional<TodoTask> updateTaskById(Long id, TodoTask updatedTask) {
         LOGGER.info("Attempting to update task with ID: " + id);
 
         // Validate input task details
@@ -159,64 +161,29 @@ public class TodoTaskService {
             LOGGER.severe("Provided updated task is null");
             throw new IllegalArgumentException("Updated task cannot be null.");
         }
-        String newName = updatedTask.getName();
-        String newDescription = updatedTask.getDescription();
-        LocalDate newDueDate = updatedTask.getDueDate();
-        TodoTask.Priority newPriority = updatedTask.getPriority();
-        TodoTask.Category newCategory = updatedTask.getCategory();
 
         // Check if the task with the given ID exists
         Optional<TodoTask> taskOptional = todoTaskRepository.findById(id);
-        if (!taskOptional.isPresent()) {
+        if (taskOptional.isPresent()) {
+            TodoTask task = taskOptional.get();
+
+            // Update the task
+            task.setName(updatedTask.getName());
+            task.setDescription(updatedTask.getDescription());
+            task.setDueDate(updatedTask.getDueDate());
+            task.setCompleted(updatedTask.isCompleted());
+            task.setPriority(updatedTask.getPriority());
+            task.setCategory(updatedTask.getCategory());
+
+            TodoTask updated = todoTaskRepository.save(task);
+            LOGGER.info("Task updated successfully: Using task ID[" + id + "]");
+
+            return Optional.of(updated);
+        } else {
             LOGGER.warning("Update failed: No task found with ID: " + id);
-            throw new IllegalArgumentException("No task found with ID: " + id);
+            return Optional.empty();
         }
-
-        TodoTask task = taskOptional.get();
-
-        // Validate newName
-        if (newName == null || newName.trim().isEmpty()) {
-            LOGGER.severe("Attempted to update with a null or empty task name.");
-            throw new IllegalArgumentException("Task name cannot be null or empty.");
-        }
-
-        // Validate newDescription
-        if (newDescription == null) {
-            LOGGER.severe("Attempted to update with a null task description.");
-            throw new IllegalArgumentException("Task description cannot be null.");
-        }
-
-        // Validate newDueDate
-        if (newDueDate != null && newDueDate.isBefore(LocalDate.now())) {
-            LOGGER.severe("Attempted to update with a due date in the past.");
-            throw new IllegalArgumentException("Due date cannot be in the past.");
-        }
-
-        // Validate newPriority
-        if (newPriority == null) {
-            LOGGER.severe("Attempted to update with a null task priority.");
-            throw new IllegalArgumentException("Priority cannot be null.");
-        }
-
-        // Validate newCategory
-        if (newCategory == null) {
-            LOGGER.severe("Attempted to update with a null task category.");
-            throw new IllegalArgumentException("Category cannot be null.");
-        }
-
-        // Update the task
-        task.setName(newName);
-        task.setDescription(newDescription);
-        task.setDueDate(newDueDate);
-        task.setCompleted(updatedTask.isCompleted());
-        task.setPriority(newPriority);
-        task.setCategory(newCategory);
-
-        TodoTask updated = todoTaskRepository.save(task);
-        LOGGER.info("Task updated successfully: Using task ID[" + id + "] to change to " + newName);
-        return updated;
     }
-
 
     // Filters tasks by priority
     public List<TodoTask> filterTasksByPriority(TodoTask.Priority priority) {
@@ -238,7 +205,6 @@ public class TodoTaskService {
         return filteredTasks;
     }
 
-
     // Filters tasks by category
     public List<TodoTask> filterTasksByCategory(TodoTask.Category category) {
         LOGGER.info("Filtering tasks by category: " + category);
@@ -258,7 +224,6 @@ public class TodoTaskService {
         LOGGER.info("Number of tasks found with category " + category + ": " + filteredTasks.size());
         return filteredTasks;
     }
-
 
     // Filters tasks by due date
     public List<TodoTask> filterTasksByDueDate(LocalDate dueDate) {
@@ -290,6 +255,25 @@ public class TodoTaskService {
         return filteredTasks;
     }
 
+    public List<TodoTask> filterTasks(TodoTask.Priority priority, TodoTask.Category category, LocalDate dueDate, Boolean isCompleted) {
+        Stream<TodoTask> taskStream = todoTaskRepository.findAll().stream();
+    
+        if (priority != null) {
+            taskStream = taskStream.filter(task -> task.getPriority() == priority);
+        }
+        if (category != null) {
+            taskStream = taskStream.filter(task -> task.getCategory() == category);
+        }
+        if (dueDate != null) {
+            taskStream = taskStream.filter(task -> task.getDueDate().equals(dueDate));
+        }
+        if (isCompleted != null) {
+            taskStream = taskStream.filter(task -> task.isCompleted() == isCompleted);
+        }
+    
+        return taskStream.collect(Collectors.toList());
+    }
+    
     // Sorts tasks by priority
     public List<TodoTask> sortTasksByPriority() {
         LOGGER.info("Sorting tasks by priority.");
@@ -330,6 +314,35 @@ public class TodoTaskService {
         return sortedTasks;
     }
 
+    public List<TodoTask> sortTasks(String sortBy, String order) {
+        List<TodoTask> tasks = findAllTasks(); // Assuming you have a method to get all tasks
+    
+        Comparator<TodoTask> comparator;
+        switch (sortBy.toLowerCase()) {
+            case "priority":
+                comparator = Comparator.comparing(TodoTask::getPriority);
+                break;
+            case "category":
+                comparator = Comparator.comparing(TodoTask::getCategory);
+                break;
+            case "duedate":
+                comparator = Comparator.comparing(TodoTask::getDueDate);
+                break;
+            case "name":
+                comparator = Comparator.comparing(TodoTask::getName);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid sort criteria: " + sortBy);
+        }
+    
+        if ("desc".equalsIgnoreCase(order)) {
+            comparator = comparator.reversed();
+        }
+    
+        return tasks.stream().sorted(comparator).collect(Collectors.toList());
+    }
+    
+
     // Find all tasks: RETURNS ALL TASKS
     public List<TodoTask> findAllTasks() {
         LOGGER.info("Fetching all tasks.");
@@ -339,24 +352,18 @@ public class TodoTaskService {
     }
 
     // Find a task by ID: FIND IS SPECIFIC TO A TASK
-    public TodoTask findTaskById(Long id) {
+    public Optional<TodoTask> findTaskById(Long id) {
         LOGGER.info("Searching for task with ID: " + id);
-        
+    
         // Validate the id
         if (id == null) {
             LOGGER.warning("Task ID provided is null.");
             throw new IllegalArgumentException("Task ID cannot be null.");
         }
         
-        Optional<TodoTask> taskOptional = todoTaskRepository.findById(id);
-        if (taskOptional.isPresent()) {
-            LOGGER.info("Task found with ID: " + id);
-            return taskOptional.get();
-        } else {
-            LOGGER.warning("No task found with ID: " + id);
-            throw new IllegalArgumentException("No task found with ID: " + id);
-        }
+        return todoTaskRepository.findById(id);
     }
+    
 
     // Search tasks by name (case-insensitive, partial match): SEARCH IS GENERAL/BROAD
     public List<TodoTask> searchTasksByName(String query) {
