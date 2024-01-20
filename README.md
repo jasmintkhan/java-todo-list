@@ -13,11 +13,12 @@ Prerequisites include Java, Maven, and Git. To set up and run the application:
 
 ### Java Version
 - **Prerequisites:** Ensure Java is installed on your system.
-- **Running the Application:** Navigate to the `src` directory of the Java version and compile the code using `javac FileName.java`, then run it using `java FileName`.
+- **Running the Application:** Navigate to the `src` directory of the Java version and compile the code using `javac todolist/*.java`, then run it using `java todolist.TodoTaskApp`.
 
 ### Spring Boot Version
 - **Prerequisites:** Ensure Java and Maven are installed on your system.
 - **Running the Application:** Navigate to the root of the Spring Boot version and run `mvn spring-boot:run`. The application will start, and you can access it via `http://localhost:8080` in your web browser.
+- **Note:** The Spring Boot version is currently a work in progress, so some features may not be fully functional yet.
 
 ## Usage
 - **Java Version:** The console-based application will guide you through the available commands once started.
