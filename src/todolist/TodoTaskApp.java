@@ -120,10 +120,48 @@ public class TodoTaskApp {
     }
     
     private void updateTask() {
+        System.out.println("Update by: 1. ID 2. Name");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline
+    
+        switch (choice) {
+            case 1:
+                updateTaskById();
+                break;
+            case 2:
+                updateTaskByName();
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
+    }
+    
+    private void updateTaskById() {
         System.out.println("Enter task ID to update:");
         int taskId = scanner.nextInt();
         scanner.nextLine(); // Consume the newline
+
+        TodoTask updatedTask = getUpdatedTaskDetails();
+
+        controller.updateTaskByID(taskId, updatedTask.getName(), updatedTask.getDescription(), 
+                                updatedTask.getDueDate(), updatedTask.isCompleted(), 
+                                updatedTask.getPriority(), updatedTask.getCategory());
+        System.out.println("Task updated successfully!");
+    }
     
+    private void updateTaskByName() {
+        System.out.println("Enter task name to update:");
+        String taskName = scanner.nextLine();
+    
+        TodoTask updatedTask = getUpdatedTaskDetails();
+    
+        controller.updateTaskByName(taskName, updatedTask.getName(), updatedTask.getDescription(), 
+                                    updatedTask.getDueDate(), updatedTask.isCompleted(), 
+                                    updatedTask.getPriority(), updatedTask.getCategory());
+        System.out.println("Task updated successfully!");
+    }
+    
+    private TodoTask getUpdatedTaskDetails() {
         System.out.println("Enter new task name:");
         String newName = scanner.nextLine();
     
@@ -142,13 +180,12 @@ public class TodoTaskApp {
         String newCategoryString = scanner.nextLine();
         Category newCategory = Category.valueOf(newCategoryString.toUpperCase());
     
-        controller.updateTaskByID(taskId, newName, newDescription, newDueDate, false, newPriority, newCategory);
-        System.out.println("Task updated successfully!");
+        return new TodoTask(newName, newDescription, newDueDate, newPriority, newCategory);
     }
 
     private void displayTasks(List<TodoTask> tasks) {
         for (TodoTask task : tasks) {
-            System.out.println("ID; "+task.getId() + " - " + task);
+            System.out.println("ID: "+task.getId() + " ---- " + task);
         }
     }
 

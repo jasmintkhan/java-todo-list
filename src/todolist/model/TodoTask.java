@@ -91,14 +91,13 @@ public class TodoTask {
     //Override toString to print details of a task
     @Override
     public String toString() {
-        return "TodoTask{" +
-            "name='" + name + '\'' +
-            ", description='" + description + '\'' +
-            ", isCompleted=" + isCompleted +
-            ", dueDate=" + dueDate +
-            ", priority=" + priority +
-            ", category=" + category +
-            '}';
+        return "Task{ " + name + '}' +
+            "\nDescription = " + description +
+            "\nCompletion Status = " + isCompleted +
+            "\nDue Date = " + dueDate +
+            "\nPriority = " + priority +
+            "\nCategory = " + category + "\n"
+            ;
     }
 
     //TESTING
