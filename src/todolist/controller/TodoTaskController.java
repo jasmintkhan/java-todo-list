@@ -104,6 +104,10 @@ public class TodoTaskController {
             }
         }
     }
+    // Method to get all tasks
+    public List<TodoTask> findAllTasks() {
+        return new ArrayList<>(tasks); // Return a new list containing all tasks
+    }
 
     //Updates a task in the list BY ID
     public void updateTaskByID(int taskID, String newName, String newDescription, LocalDate newDueDate, boolean newIsCompleted, Priority newPriority, Category newCategory){
@@ -296,8 +300,8 @@ public class TodoTaskController {
                 }
             };
 
-            // Schedule the task to run every hour
-            timer.schedule(task, 0, 3600000);
+            // Schedule the task to run every day
+            timer.schedule(task, 0, 86400000);
         }
 
         private void checkForUpcomingTasks() {
@@ -325,6 +329,9 @@ public class TodoTaskController {
                 System.out.println("OVERDUE: The task '" + task.getName() + "' was due on " + task.getDueDate() + " and is not completed!");
             }
         }
+
+
+        
         
     }
 
