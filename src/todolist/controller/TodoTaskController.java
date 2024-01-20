@@ -2,12 +2,15 @@ package todolist.controller;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import java.util.*;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 
 import todolist.model.TodoTask;
 import todolist.model.TodoTask.Priority; // Importing Priority
 import todolist.model.TodoTask.Category; // Importing Category
+import todolist.utils.CustomLogFormatter;
 
 // Adds new tasks
 // Deletes tasks
@@ -16,10 +19,18 @@ import todolist.model.TodoTask.Category; // Importing Category
 public class TodoTaskController {
     private static final Logger LOGGER = Logger.getLogger(TodoTaskController.class.getName()); // Logger instance
     private ArrayList<TodoTask> tasks = new ArrayList<TodoTask>(); //Stores TodoTask objects
-
+    
     //Constructor: to set initial values for a task
     public TodoTaskController(){
         //Nothing to do here yet
+    }
+
+    static {
+        LOGGER.setLevel(Level.SEVERE);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new CustomLogFormatter());
+        LOGGER.addHandler(handler);
+        LOGGER.setUseParentHandlers(false);
     }
 
     //Adds a new task to the list
@@ -285,6 +296,7 @@ public class TodoTaskController {
     public static class NotificationService {
         private TodoTaskController controller;
         private Timer timer;
+        
 
         public NotificationService(TodoTaskController controller) {
             this.controller = controller;
@@ -330,7 +342,11 @@ public class TodoTaskController {
             }
         }
 
-
+        public void stopChecking() {
+            if (timer != null) {
+                timer.cancel(); // Stops the timer and all scheduled tasks
+            }
+        }
         
         
     }

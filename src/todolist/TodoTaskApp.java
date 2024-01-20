@@ -13,13 +13,19 @@ public class TodoTaskApp {
 
     private final TodoTaskController controller;
     private final Scanner scanner;
+    private TodoTaskController.NotificationService notificationService;
 
     public TodoTaskApp(TodoTaskController controller) {
         this.controller = new TodoTaskController();
         this.scanner = new Scanner(System.in);
+        this.notificationService = new TodoTaskController.NotificationService(controller);
+
     }
 
     public void start() {
+        // Starting the notification service
+        
+        notificationService.startChecking();
         boolean running = true;
         while (running) {
             System.out.println("Choose an option: \n1. Add Task \n2. Delete Task \n3. Update Task \n4. List Tasks \n5. Exit");
@@ -40,6 +46,7 @@ public class TodoTaskApp {
                     listTasks();
                     break;
                 case 5:
+                    exitApplication();
                     running = false;
                     break;
                 default:
@@ -48,6 +55,12 @@ public class TodoTaskApp {
         }
         scanner.close();
         System.out.println("Thank you for using my Todo List Application!");
+    }
+
+    private void exitApplication() {
+        notificationService.stopChecking(); // Now accessible here
+        System.out.println("Thank you for using my Todo List Application!");
+        System.exit(0);
     }
 
     private void addTask() {
@@ -116,25 +129,77 @@ public class TodoTaskApp {
     }
 
     private void filterTasks() {
-        System.out.println("Filter by: 1. Priority 2. Category 3. Due Date 4. Completion Status");
-        // Get user input and call the respective method in the controller
-        // For example, if user chooses Priority:
-        System.out.println("Enter priority (LOW, MEDIUM, HIGH):");
-        String priorityString = scanner.nextLine();
-        Priority priority = Priority.valueOf(priorityString.toUpperCase());
-        displayTasks(controller.filterTasksByPriority(priority));
+        System.out.println("Filter by: \n1. Priority \n2. Category \n3. Due Date \n4. Completion Status");
+        System.out.print("Your choice: ");
+        int filterChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume the remaining newline
+    
+        switch (filterChoice) {
+            case 1:
+                // Filter by Priority
+                System.out.println("Enter priority (LOW, MEDIUM, HIGH):");
+                String priorityString = scanner.nextLine();
+                Priority priority = Priority.valueOf(priorityString.toUpperCase());
+                displayTasks(controller.filterTasksByPriority(priority));
+                break;
+            case 2:
+                // Filter by Category
+                System.out.println("Enter category (WORK, STUDY, PERSONAL, HEALTH):");
+                String categoryString = scanner.nextLine();
+                Category category = Category.valueOf(categoryString.toUpperCase());
+                displayTasks(controller.filterTasksByCategory(category));
+                break;
+            case 3:
+                // Filter by Due Date
+                System.out.println("Enter due date (YYYY-MM-DD):");
+                String dateString = scanner.nextLine();
+                LocalDate dueDate = LocalDate.parse(dateString);
+                displayTasks(controller.filterTasksByDueDate(dueDate));
+                break;
+            case 4:
+                // Filter by Completion Status
+                System.out.println("Enter completion status (true for completed, false for not completed):");
+                boolean isCompleted = scanner.nextBoolean();
+                displayTasks(controller.filterTasksByCompletionStatus(isCompleted));
+                scanner.nextLine(); // Consume the remaining newline
+                break;
+            default:
+                System.out.println("Invalid choice. Please choose a valid option.");
+                break;
+        }
     }
     
     private void sortTasks() {
-        System.out.println("Sort by: 1. Priority 2. Category 3. Due Date 4. Name");
-        // Get user input and call the respective method in the controller
-        // For example, if user chooses Priority:
-        displayTasks(controller.sortTasksByPriority());
+        System.out.println("Sort by: \n1. Priority \n2. Category \n3. Due Date \n4. Name");
+        System.out.print("Your choice: ");
+        int sortChoice = scanner.nextInt();
+        scanner.nextLine(); // Consume the remaining newline
+    
+        switch (sortChoice) {
+            case 1:
+                // Sort by Priority
+                displayTasks(controller.sortTasksByPriority());
+                break;
+            case 2:
+                // Sort by Category
+                displayTasks(controller.sortTasksByCategory());
+                break;
+            case 3:
+                // Sort by Due Date
+                displayTasks(controller.sortTasksByDueDate());
+                break;
+            case 4:
+                // Sort by Name
+                displayTasks(controller.sortTasksByName());
+                break;
+            default:
+                System.out.println("Invalid choice. Please choose a valid option.");
+                break;
+        }
     }
     
-    
     private void listTasks() {
-        System.out.println("Choose an option:");
+    System.out.println("Choose an option:");
     System.out.println("1. List all tasks");
     System.out.println("2. Filter tasks");
     System.out.println("3. Sort tasks");
@@ -155,16 +220,10 @@ public class TodoTaskApp {
             System.out.println("Invalid choice");
     }
     }
-    
 
     public static void main(String[] args) {
         TodoTaskController controller = new TodoTaskController();
         TodoTaskApp app = new TodoTaskApp(controller);
-    
-        // Starting the notification service
-        TodoTaskController.NotificationService notificationService = new TodoTaskController.NotificationService(controller);
-        notificationService.startChecking();
-    
         app.start();
     }
 }
