@@ -88,11 +88,35 @@ public class TodoTaskApp {
     }
     
     private void deleteTask() {
-        System.out.println("Enter task ID to delete:");
-        int taskId = scanner.nextInt();
+        System.out.println("Delete by: 1. ID 2. Name");
+        int choice = scanner.nextInt();
         scanner.nextLine(); // Consume the newline
-        controller.deleteTaskByID(taskId);
-        System.out.println("Task deleted successfully!");
+    
+        switch (choice) {
+            case 1:
+                System.out.println("Enter task ID to delete:");
+                int taskId = scanner.nextInt();
+                scanner.nextLine(); // Consume the newline
+                try {
+                    controller.deleteTaskByID(taskId);
+                    System.out.println("Task deleted successfully!");
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case 2:
+                System.out.println("Enter task name to delete:");
+                String taskName = scanner.nextLine();
+                try {
+                    controller.deleteTaskByName(taskName);
+                    System.out.println("Task deleted successfully!");
+                } catch (IllegalArgumentException e) {
+                    System.out.println(e.getMessage());
+                }
+                break;
+            default:
+                System.out.println("Invalid choice");
+        }
     }
     
     private void updateTask() {
@@ -124,7 +148,7 @@ public class TodoTaskApp {
 
     private void displayTasks(List<TodoTask> tasks) {
         for (TodoTask task : tasks) {
-            System.out.println(task);
+            System.out.println("ID; "+task.getId() + " - " + task);
         }
     }
 
