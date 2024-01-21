@@ -6,6 +6,7 @@ import todolist.model.TodoTask.Priority;
 import todolist.model.TodoTask.Category;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -70,17 +71,38 @@ public class TodoTaskApp {
         System.out.println("Enter task description:");
         String description = scanner.nextLine();
     
-        System.out.println("Enter task due date (yyyy-MM-dd):");
-        String dueDateString = scanner.nextLine();
-        LocalDate dueDate = LocalDate.parse(dueDateString);
+        LocalDate dueDate = null;
+        while (dueDate == null) {
+            System.out.println("Enter task due date (yyyy-MM-dd):");
+            String dueDateString = scanner.nextLine();
+            try {
+                dueDate = LocalDate.parse(dueDateString);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in yyyy-MM-dd format.");
+            }
+        }
     
-        System.out.println("Enter task priority (LOW, MEDIUM, HIGH):");
-        String priorityString = scanner.nextLine();
-        Priority priority = Priority.valueOf(priorityString.toUpperCase());
+        Priority priority = null;
+        while (priority == null) {
+            System.out.println("Enter task priority (LOW, MEDIUM, HIGH):");
+            String priorityString = scanner.nextLine();
+            try {
+                priority = Priority.valueOf(priorityString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid priority. Please enter LOW, MEDIUM, or HIGH.");
+            }
+        }
     
-        System.out.println("Enter task category (WORK, STUDY, PERSONAL, HEALTH):");
-        String categoryString = scanner.nextLine();
-        Category category = Category.valueOf(categoryString.toUpperCase());
+        Category category = null;
+        while (category == null) {
+            System.out.println("Enter task category (WORK, STUDY, PERSONAL, HEALTH):");
+            String categoryString = scanner.nextLine();
+            try {
+                category = Category.valueOf(categoryString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid category. Please enter WORK, STUDY, PERSONAL, or HEALTH.");
+            }
+        }
     
         TodoTask newTask = new TodoTask(name, description, dueDate, priority, category);
         controller.addTask(newTask);
